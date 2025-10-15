@@ -6,6 +6,18 @@ export { LogWhispererPipeline } from "./workflows";
 
 const router = Router();
 
+// CORS headers
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, x-session-id",
+};
+
+// Handle CORS preflight requests
+router.options("*", () => {
+  return new Response(null, { headers: corsHeaders });
+});
+
 router.post("/api/test-ai", async (request, env: EnvBindings) => {
   // Test with @cf/baai/bge-small-en-v1.5 embedding model (simpler, no messages)
   try {
@@ -18,7 +30,7 @@ router.post("/api/test-ai", async (request, env: EnvBindings) => {
       embedResult,
       message: "Embedding model works!"
     }), {
-      headers: { "Content-Type": "application/json" }
+      headers: { ...corsHeaders, "Content-Type": "application/json" }
     });
   } catch (embedError) {
     // If embedding fails, try different LLM call format
@@ -32,7 +44,7 @@ router.post("/api/test-ai", async (request, env: EnvBindings) => {
         llmResult,
         message: "LLM with prompt works!"
       }), {
-        headers: { "Content-Type": "application/json" }
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     } catch (llmError) {
       return new Response(JSON.stringify({ 
@@ -41,7 +53,7 @@ router.post("/api/test-ai", async (request, env: EnvBindings) => {
         aiType: typeof env.AI
       }), {
         status: 500,
-        headers: { "Content-Type": "application/json" }
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
   }
@@ -62,14 +74,29 @@ router.post("/api/chat", async (request, env: EnvBindings) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ...payload, sessionId })
   });
-  return response;
+  
+  // Add CORS headers to the response
+  const newResponse = new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: { ...Object.fromEntries(response.headers), ...corsHeaders }
+  });
+  return newResponse;
 });
 
 router.get("/api/sessions/:id", async (request, env: EnvBindings) => {
   const { id } = request.params as { id: string };
   const stubId = env.SESSION_DO.idFromName(id);
   const stub = env.SESSION_DO.get(stubId);
-  return stub.fetch(`https://session/history?sessionId=${encodeURIComponent(id)}`);
+  const response = await stub.fetch(`https://session/history?sessionId=${encodeURIComponent(id)}`);
+  
+  // Add CORS headers to the response
+  const newResponse = new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: { ...Object.fromEntries(response.headers), ...corsHeaders }
+  });
+  return newResponse;
 });
 
 router.post("/api/upload", async (request, env: EnvBindings) => {
@@ -78,11 +105,14 @@ router.post("/api/upload", async (request, env: EnvBindings) => {
   const key = `${sessionId}/${Date.now()}.log`;
   await env.LOGR2.put(key, body);
   return new Response(JSON.stringify({ key, sessionId }), {
-    headers: { "Content-Type": "application/json" }
+    headers: { ...corsHeaders, "Content-Type": "application/json" }
   });
 });
 
-router.all("*", () => new Response("Not found", { status: 404 }));
+router.all("*", () => new Response("Not found", { 
+  status: 404,
+  headers: corsHeaders 
+}));
 
 export default {
   fetch: (request: Request, env: EnvBindings, ctx: ExecutionContext) =>
