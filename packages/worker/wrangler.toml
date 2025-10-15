@@ -30,13 +30,12 @@ bucket_name = "logwhisperer-uploads"
 name = "logwhisperer-pipeline"
 binding = "PIPELINE"
 class_name = "LogWhispererPipeline"
+script_name = "src/workflows.ts"
 
 [vars]
 MAX_TOKENS = "2048"
 SAFE_COMMANDS_ALLOWLIST = "iptables,ip,ufw,nft,cisco,netsh,powershell,systemctl,route"
 
-[env.production]
-
-[[env.production.migrations]]
+[[migrations]]
 tag = "v1"
-new_sqlite_classes = ["SessionDO"]
+new_classes = ["SessionDO"]
