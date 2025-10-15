@@ -1,5 +1,9 @@
 import { getSessionEvents, getSessionSuggestions, type EnvBindings } from "./db";
-import { LogWhispererPipeline, type PipelineInput } from "./workflows";
+import {
+  LogWhispererPipeline,
+  type PipelineInput,
+  type PipelineOutput
+} from "./workflows";
 import { redactMessage } from "./pipelineUtils";
 
 interface StoredState {
@@ -31,10 +35,10 @@ export class SessionDO {
     }
   }
 
-  private async runPipeline(input: PipelineInput) {
+  private async runPipeline(input: PipelineInput): Promise<PipelineOutput> {
     if (this.env.PIPELINE?.createDispatcher) {
       const dispatcher = this.env.PIPELINE.createDispatcher<PipelineInput>("LogWhispererPipeline");
-      return dispatcher.run(input) as Promise<unknown>;
+      return dispatcher.run(input) as Promise<PipelineOutput>;
     }
     const pipeline = new LogWhispererPipeline(this.env);
     return pipeline.run(input);

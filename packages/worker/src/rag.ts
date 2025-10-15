@@ -12,12 +12,28 @@ interface VectorizeQueryOptions {
   returnMetadata?: string[];
 }
 
+interface TextQueryCapableIndex {
+  query: (
+    query: string,
+    options?: VectorizeQueryOptions & {
+      returnMetadata?: string[];
+    }
+  ) => Promise<{
+    matches?: Array<{
+      id: string;
+      score?: number;
+      metadata?: Record<string, unknown>;
+    }>;
+  }>;
+}
+
 export async function vectorizeSearch(
   index: VectorizeIndex,
   query: string,
   options: VectorizeQueryOptions = {}
 ): Promise<RetrievedPattern[]> {
-  const results = await index.query(query, {
+  const queryable = index as unknown as TextQueryCapableIndex;
+  const results = await queryable.query(query, {
     topK: options.topK ?? 8,
     returnMetadata: options.returnMetadata ?? ["title", "vendor", "signature", "guidance"]
   });

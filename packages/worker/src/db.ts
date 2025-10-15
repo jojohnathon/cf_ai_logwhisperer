@@ -15,7 +15,7 @@ export interface SuggestionRecord {
 export interface EnvBindings {
   AI: AiBinding;
   PIPELINE: WorkflowBinding;
-  SESSION_DO: DurableObjectNamespace<SessionDO>;
+  SESSION_DO: DurableObjectNamespace;
   CFG_KV: KVNamespace;
   LOGDB: D1Database;
   PATTERNS_INDEX: VectorizeIndex;
@@ -34,10 +34,6 @@ export interface WorkflowBinding {
 
 export interface WorkflowDispatcher<T> {
   run(input: T): Promise<unknown>;
-}
-
-export interface SessionDO {
-  fetch(request: Request): Promise<Response>;
 }
 
 export async function insertEvent(db: D1Database, event: LogEvent): Promise<void> {
