@@ -26,10 +26,13 @@ index_name = "log_patterns"
 binding = "LOGR2"
 bucket_name = "logwhisperer-uploads"
 
-[workflows]
-bindings = [
-  { name = "PIPELINE", class_name = "LogWhispererPipeline" }
-]
+[[workflows]]
+binding = "PIPELINE"
+class_name = "LogWhispererPipeline"
+
+[[migrations]]
+tag = "v1"
+new_classes = ["SessionDO"]
 
 [vars]
 MAX_TOKENS = "2048"
