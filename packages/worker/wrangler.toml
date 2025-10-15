@@ -11,12 +11,12 @@ class_name = "SessionDO"
 
 [[kv_namespaces]]
 binding = "CFG_KV"
-id = "YOUR_KV_ID"
+id = "8bb2505902bf49a2992bd297158a5d11"
 
 [[d1_databases]]
 binding = "LOGDB"
 database_name = "logwhisperer_db"
-database_id = "YOUR_D1_ID"
+database_id = "fe9e777d-9274-41b0-902f-b2a8e402f9bc"
 
 [[vectorize]]
 binding = "PATTERNS_INDEX"
