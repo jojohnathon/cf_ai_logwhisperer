@@ -1,0 +1,23 @@
+{
+  "name": "worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "dev": "wrangler dev --local --persist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:golden": "vitest run --config vitest.config.ts --runInBand --reporter=verbose --dir src/__tests__/golden"
+  },
+  "dependencies": {
+    "itty-router": "^4.0.23"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250204.1",
+    "@types/node": "^22.7.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3",
+    "vitest": "^1.6.0"
+  }
+}

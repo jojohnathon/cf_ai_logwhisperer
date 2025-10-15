@@ -1,0 +1,3 @@
+Jun 21 09:10:01 host NetworkManager[1234]: <warn>  [1655800201.0000] dhcp4 (wlp3s0): request timed out
+Jun 21 09:10:05 host wpa_supplicant[5678]: CTRL-EVENT-DISCONNECTED bssid=aa:bb:cc:dd:ee:ff reason=4
+Jun 21 09:10:10 host kernel: iwlwifi 0000:3a:00.0: Microcode SW error detected. Restarting 0x2000000.

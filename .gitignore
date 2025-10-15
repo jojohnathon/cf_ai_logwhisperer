@@ -1,0 +1,7 @@
+node_modules
+pnpm-debug.log
+packages/**/dist
+packages/**/node_modules
+vectorize_seed.json
+.DS_Store
+.env*

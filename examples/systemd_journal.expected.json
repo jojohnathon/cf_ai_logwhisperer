@@ -1,0 +1,12 @@
+{
+  "summary": "Wireless adapter firmware fault is causing DHCP timeouts and disconnects.",
+  "anomalies": [
+    "NetworkManager DHCP timeouts",
+    "wpa_supplicant disconnections",
+    "iwlwifi microcode errors"
+  ],
+  "suggested_commands": [
+    { "cmd": "sudo modprobe -r iwlwifi && sudo modprobe iwlwifi", "why": "Reload wireless driver to clear firmware fault", "risk": "med" },
+    { "cmd": "sudo systemctl restart NetworkManager", "why": "Force DHCP renew after driver reset", "risk": "med" }
+  ]
+}

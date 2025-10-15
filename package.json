@@ -1,0 +1,8 @@
+{
+  "name": "cf_ai_logwhisperer",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ]
+}

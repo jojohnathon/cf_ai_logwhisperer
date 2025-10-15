@@ -1,0 +1,11 @@
+{
+  "summary": "ASA is dropping outside HTTPS connections to the 8443 service per outside-in policy.",
+  "anomalies": [
+    "%ASA-4-106023 denies for outside hosts",
+    "Connection resets after policy drops"
+  ],
+  "suggested_commands": [
+    { "cmd": "access-list outside-in extended permit tcp host 203.0.113.20 host 10.0.0.5 eq 8443", "why": "Allow trusted host to reach inside service", "risk": "med" },
+    { "cmd": "access-list outside-in extended permit tcp host 203.0.113.21 host 10.0.0.5 eq 8443", "why": "Permit additional trusted host", "risk": "med" }
+  ]
+}

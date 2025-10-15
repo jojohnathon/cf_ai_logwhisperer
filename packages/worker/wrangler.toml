@@ -1,0 +1,36 @@
+name = "cf_ai_logwhisperer_worker"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "SESSION_DO"
+class_name = "SessionDO"
+
+[[kv_namespaces]]
+binding = "CFG_KV"
+id = "YOUR_KV_ID"
+
+[[d1_databases]]
+binding = "LOGDB"
+database_name = "logwhisperer_db"
+database_id = "YOUR_D1_ID"
+
+[[vectorize]]
+binding = "PATTERNS_INDEX"
+index_name = "log_patterns"
+
+[[r2_buckets]]
+binding = "LOGR2"
+bucket_name = "logwhisperer-uploads"
+
+[workflows]
+bindings = [
+  { name = "PIPELINE", class_name = "LogWhispererPipeline" }
+]
+
+[vars]
+MAX_TOKENS = "2048"
+SAFE_COMMANDS_ALLOWLIST = "iptables,ip,ufw,nft,cisco,netsh,powershell,systemctl,route"
