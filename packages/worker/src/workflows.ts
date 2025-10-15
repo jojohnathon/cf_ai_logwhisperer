@@ -52,8 +52,19 @@ export interface VectorizeMatch {
   fields?: Record<string, unknown>;
 }
 
+export interface R2Object {
+  key: string;
+  size: number;
+  etag: string;
+  uploaded: string;
+  httpEtag?: string;
+  checksums?: Record<string, string>;
+  version?: string;
+  customMetadata?: Record<string, string>;
+}
+
 export interface R2Bucket {
-  put: (key: string, value: ArrayBuffer | string | ReadableStream, options?: Record<string, unknown>) => Promise<void>;
+  put: (key: string, value: ArrayBuffer | string | ReadableStream, options?: Record<string, unknown>) => Promise<R2Object>;
 }
 
 export interface ScrubResult {

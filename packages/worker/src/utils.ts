@@ -26,7 +26,7 @@ export async function computeSHA1(text: string): Promise<string> {
     hash = (hash << 5) - hash + text.charCodeAt(i);
     hash |= 0; // convert to 32-bit int
   }
-  return hash.toString(16);
+  return (hash >>> 0).toString(16);
 }
 
 function bufferToHex(buffer: ArrayBuffer): string {
