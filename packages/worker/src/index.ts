@@ -1,6 +1,8 @@
 import { Router } from "itty-router";
 import type { EnvBindings } from "./db";
 
+export { SessionDO } from "./durable";
+
 const router = Router();
 
 router.post("/api/chat", async (request, env: EnvBindings) => {
