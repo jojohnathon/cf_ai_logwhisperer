@@ -6,6 +6,47 @@ export { LogWhispererPipeline } from "./workflows";
 
 const router = Router();
 
+router.post("/api/test-ai", async (request, env: EnvBindings) => {
+  // Test with @cf/baai/bge-small-en-v1.5 embedding model (simpler, no messages)
+  try {
+    const embedResult = await env.AI.run("@cf/baai/bge-small-en-v1.5", {
+      text: "Hello world"
+    });
+    
+    return new Response(JSON.stringify({ 
+      success: true, 
+      embedResult,
+      message: "Embedding model works!"
+    }), {
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (embedError) {
+    // If embedding fails, try different LLM call format
+    try {
+      const llmResult = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-awq", {
+        prompt: "Say hello in one word"
+      });
+      
+      return new Response(JSON.stringify({ 
+        success: true, 
+        llmResult,
+        message: "LLM with prompt works!"
+      }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    } catch (llmError) {
+      return new Response(JSON.stringify({ 
+        embedError: String(embedError),
+        llmError: String(llmError),
+        aiType: typeof env.AI
+      }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+  }
+});
+
 router.post("/api/chat", async (request, env: EnvBindings) => {
   const payload = await request.json<{
     sessionId?: string;

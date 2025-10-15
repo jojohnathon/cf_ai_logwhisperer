@@ -101,9 +101,9 @@ export async function embedText(
   if (!trimmed) {
     return new Float32Array();
   }
-  const result = await ai.run({
-    model,
-    input: trimmed
+  // Call with model as first parameter, options as second
+  const result = await ai.run(model, {
+    text: trimmed
   });
   const vector = extractEmbeddingVector(result);
   if (!vector) {
@@ -121,6 +121,10 @@ export async function vectorizeSearch(
   vector?: ArrayLike<number> | Float32Array | null,
   options: VectorizeQueryOptions = {}
 ): Promise<RetrievedPattern[]> {
+  if (!index) {
+    console.warn("Vectorize index is not available");
+    return [];
+  }
   if (!vector) {
     return [];
   }

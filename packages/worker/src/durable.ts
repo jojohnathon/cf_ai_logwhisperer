@@ -36,39 +36,52 @@ export class SessionDO {
   }
 
   private async runPipeline(input: PipelineInput): Promise<PipelineOutput> {
-    if (this.env.PIPELINE?.createDispatcher) {
-      const dispatcher = this.env.PIPELINE.createDispatcher<PipelineInput>("LogWhispererPipeline");
-      return dispatcher.run(input) as Promise<PipelineOutput>;
-    }
+    // Temporarily bypass workflow to test if that's the issue
+    // if (this.env.PIPELINE?.createDispatcher) {
+    //   const dispatcher = this.env.PIPELINE.createDispatcher<PipelineInput>("LogWhispererPipeline");
+    //   return dispatcher.run(input) as Promise<PipelineOutput>;
+    // }
     const pipeline = new LogWhispererPipeline(this.env);
     return pipeline.run(input);
   }
 
   private async handleChat(request: Request) {
-    const payload = await request.json<{
-      sessionId: string;
-      logs: string;
-      hints?: string;
-      vendor?: string;
-    }>();
+    try {
+      const payload = await request.json<{
+        sessionId: string;
+        logs: string;
+        hints?: string;
+        vendor?: string;
+      }>();
 
-    const sessionId = payload.sessionId;
-    const state = await this.loadState();
-    state.lastActive = new Date().toISOString();
-    state.messages.push(redactMessage({ role: "user", content: payload.logs }));
-    state.messages = state.messages.slice(-20);
-    await this.persistState();
+      const sessionId = payload.sessionId;
+      const state = await this.loadState();
+      state.lastActive = new Date().toISOString();
+      state.messages.push(redactMessage({ role: "user", content: payload.logs }));
+      state.messages = state.messages.slice(-20);
+      await this.persistState();
 
-    const output = await this.runPipeline({
-      sessionId,
-      text: payload.logs,
-      hints: payload.hints,
-      vendor: payload.vendor
-    });
+      const output = await this.runPipeline({
+        sessionId,
+        text: payload.logs,
+        hints: payload.hints,
+        vendor: payload.vendor
+      });
 
-    return new Response(JSON.stringify({ ...output, sessionId }), {
-      headers: { "Content-Type": "application/json" }
-    });
+      return new Response(JSON.stringify({ ...output, sessionId }), {
+        headers: { "Content-Type": "application/json" }
+      });
+    } catch (error) {
+      console.error("Chat handler error:", error);
+      return new Response(JSON.stringify({ 
+        error: "Internal error", 
+        message: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined
+      }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
   }
 
   private async handleHistory(request: Request) {

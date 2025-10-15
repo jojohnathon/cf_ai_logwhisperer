@@ -1,6 +1,6 @@
 import { insertEvent, insertSuggestion, type EnvBindings } from "./db";
 import { embedText, vectorizeSearch, type RetrievedPattern } from "./rag";
-import { forceJSON, runWorkersAI } from "./llm";
+import { forceJSON, runWorkersAI, type LlmMessage } from "./llm";
 import {
   chunkByBytes,
   coerceAllowlist,
@@ -49,7 +49,15 @@ function buildAnalysisUserPrompt(chunks: string[], retrieved: RetrievedPattern[]
 }
 
 function buildCommandSystemPrompt(allowlist: string[]): string {
-  return `You generate up to 3 SAFE shell commands from an allowlist: ${allowlist.join(",")}.\nEach item: { "cmd": "...", "why": "...", "risk": "low|med|high" }.\nClassify as "high" if it stops services, modifies firewall broadly, or deletes configs.\nNever include destructive commands without "high" and a clear rollback line.`;
+  return `You are a JSON API. Generate up to 3 shell commands from this allowlist: ${allowlist.join(", ")}.
+
+Return ONLY valid JSON in this exact format:
+{"suggested_commands": [{"cmd": "command here", "why": "reason", "risk": "low"}]}
+
+Rules:
+- Only use commands from the allowlist
+- Mark as "high" risk if it stops services or modifies firewall
+- Return valid JSON only, no other text`;
 }
 
 function safeParseJSON<T>(text: string): T {
@@ -82,6 +90,13 @@ export class LogWhispererPipeline {
     if (!query) {
       return { retrieved: [] };
     }
+    
+    // Check if PATTERNS_INDEX is available
+    if (!this.env.PATTERNS_INDEX) {
+      console.warn("PATTERNS_INDEX is not available, skipping vector retrieval");
+      return { retrieved: [] };
+    }
+    
     try {
       const embedding = await embedText(
         this.env.AI,
@@ -101,12 +116,20 @@ export class LogWhispererPipeline {
 
   async analyze(input: { chunks: string[]; retrieved: RetrievedPattern[]; hints?: string; vendor?: string }) {
     const userPrompt = buildAnalysisUserPrompt(input.chunks, input.retrieved);
-    const messages = [
+    const messages: LlmMessage[] = [
       { role: "system" as const, content: SYSTEM_ANALYSIS_PROMPT },
       { role: "user" as const, content: userPrompt }
     ];
+    
+    // Validate messages before sending
+    for (const msg of messages) {
+      if (!msg.content || typeof msg.content !== 'string') {
+        throw new Error(`Invalid message content: ${JSON.stringify(msg)}`);
+      }
+    }
+    
     const response = await runWorkersAI(this.env, {
-      model: "@cf/meta/llama-3.3-70b-instruct-fp8",
+      model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
       messages,
       response_format: { type: "json_object" }
     });
@@ -127,7 +150,7 @@ export class LogWhispererPipeline {
       }
     ];
     const response = await runWorkersAI(this.env, {
-      model: "@cf/meta/llama-3.3-8b-instruct",
+      model: "@cf/meta/llama-3.1-8b-instruct-awq",
       messages,
       response_format: { type: "json_object" }
     });

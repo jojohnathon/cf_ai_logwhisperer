@@ -26,7 +26,7 @@ export interface EnvBindings {
 }
 
 export interface AiBinding {
-  run: (options: Record<string, unknown>) => Promise<unknown>;
+  run: (model: string, options?: Record<string, unknown>) => Promise<unknown>;
 }
 
 export interface WorkflowBinding {
