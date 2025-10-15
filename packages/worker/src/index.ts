@@ -2,6 +2,7 @@ import { Router } from "itty-router";
 import type { EnvBindings } from "./db";
 
 export { SessionDO } from "./durable";
+export { LogWhispererPipeline } from "./workflows";
 
 const router = Router();
 
