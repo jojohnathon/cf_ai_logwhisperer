@@ -118,9 +118,12 @@ export async function embedText(
 
 export async function vectorizeSearch(
   index: VectorizeIndex,
-  vector: ArrayLike<number> | Float32Array,
+  vector?: ArrayLike<number> | Float32Array | null,
   options: VectorizeQueryOptions = {}
 ): Promise<RetrievedPattern[]> {
+  if (!vector) {
+    return [];
+  }
   const normalized = toFloat32Array(vector);
   if (normalized.length === 0) {
     return [];

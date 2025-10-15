@@ -53,6 +53,24 @@ describe("LogWhispererPipeline", () => {
     }));
   });
 
+  it("falls back to empty retrieval when embeddings fail", async () => {
+    const query = vi.fn();
+    const env = {
+      PATTERNS_INDEX: { query },
+      AI: {
+        run: vi.fn().mockImplementation(() => {
+          throw new TypeError("Cannot convert undefined or null to object");
+        })
+      }
+    } as unknown as EnvBindings;
+
+    const pipeline = new LogWhispererPipeline(env);
+    const result = await pipeline.retrievePatterns({ chunks: ["chunk"] });
+
+    expect(result.retrieved).toEqual([]);
+    expect(query).not.toHaveBeenCalled();
+  });
+
   it("requests JSON-formatted command suggestions", async () => {
     const env = { SAFE_COMMANDS_ALLOWLIST: "ls,cat" } as unknown as EnvBindings;
     const runSpy = vi
