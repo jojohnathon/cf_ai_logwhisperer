@@ -2,6 +2,8 @@
 
 **cf_ai_logwhisperer** — Paste router/firewall/system logs. Get a plain-English summary, anomaly list, and up to 3 safe command suggestions with rationale — with session memory and reproducible prompts.
 
+https://cf-ai-logwhisperer.pages.dev
+
 ## Architecture at a glance
 ```
 Pages (chat UI)
