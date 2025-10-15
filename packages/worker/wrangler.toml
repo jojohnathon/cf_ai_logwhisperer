@@ -31,10 +31,12 @@ name = "logwhisperer-pipeline"
 binding = "PIPELINE"
 class_name = "LogWhispererPipeline"
 
-[[migrations]]
-tag = "v1"
-new_sqlite_classes = ["SessionDO"]
-
 [vars]
 MAX_TOKENS = "2048"
 SAFE_COMMANDS_ALLOWLIST = "iptables,ip,ufw,nft,cisco,netsh,powershell,systemctl,route"
+
+[env.production]
+
+[[env.production.migrations]]
+tag = "v1"
+new_sqlite_classes = ["SessionDO"]

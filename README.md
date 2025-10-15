@@ -115,7 +115,7 @@ pnpm dev
 ### Deploy
 ```bash
 cd packages/worker
-wrangler deploy
+wrangler deploy --env production
 
 cd ../pages-app
 pnpm run deploy
