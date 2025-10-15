@@ -1,0 +1,10 @@
+{
+  "summary": "UFW is blocking multicast DNS while DHCP declines show the client refusing offered leases.",
+  "anomalies": [
+    "UFW blocking UDP/5353 multicast traffic",
+    "DHCP client sending repeated DECLINEs"
+  ],
+  "assumptions": [
+    "Client relies on mDNS for discovery"
+  ]
+}

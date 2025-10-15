@@ -1,0 +1,3 @@
+%ASA-4-106023 Deny tcp src outside:203.0.113.10/443 dst inside:192.168.10.20/8443 by access-group "outside_access_in" [0x0, 0x0]
+%ASA-4-106023 Deny tcp src outside:203.0.113.11/22 dst inside:192.168.10.50/22 by access-group "outside_access_in" [0x0, 0x0]
+%ASA-6-302014 Teardown TCP connection 123456789 for outside:203.0.113.11/22 to inside:192.168.10.50/22 duration 0:00:12 bytes 2356 TCP Reset-I

@@ -1,0 +1,11 @@
+{
+  "summary": "Wi-Fi connection to Campus WiFi is failing due to driver microcode errors causing disconnects.",
+  "anomalies": [
+    "NetworkManager activation failure on wlan0",
+    "wpa_supplicant disconnect reason=4",
+    "iwlwifi microcode software error"
+  ],
+  "assumptions": [
+    "Driver reload or firmware update will help"
+  ]
+}

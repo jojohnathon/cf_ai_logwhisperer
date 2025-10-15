@@ -1,0 +1,10 @@
+{
+  "summary": "ASA is denying inbound TCP attempts on HTTPS and SSH/22 according to outside_access_in policy.",
+  "anomalies": [
+    "%ASA-4-106023 denies from 203.0.113.10/443",
+    "%ASA-4-106023 denies from 203.0.113.11/22"
+  ],
+  "assumptions": [
+    "Traffic is unsolicited and the denies are expected"
+  ]
+}

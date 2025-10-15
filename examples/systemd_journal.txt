@@ -1,0 +1,3 @@
+Jun 21 12:11:03 laptop NetworkManager[1134]: <warn>  [1655818263.2168] device (wlan0): Activation: failed for connection 'Campus WiFi'
+Jun 21 12:11:05 laptop wpa_supplicant[1073]: wlan0: CTRL-EVENT-DISCONNECTED bssid=de:ad:be:ef:00:01 reason=4
+Jun 21 12:11:10 laptop kernel: iwlwifi 0000:00:14.3: Microcode SW error detected. Restarting 0x82000000.
