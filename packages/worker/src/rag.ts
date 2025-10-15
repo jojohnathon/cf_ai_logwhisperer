@@ -7,16 +7,18 @@ export interface RetrievedPattern {
   score?: number;
 }
 
+type ReturnMetadataOption = boolean | "none" | "indexed" | "all";
+
 interface VectorizeQueryOptions {
   topK?: number;
-  returnMetadata?: string[];
+  returnMetadata?: ReturnMetadataOption;
 }
 
 interface TextQueryCapableIndex {
   query: (
     query: string,
     options?: VectorizeQueryOptions & {
-      returnMetadata?: string[];
+      returnMetadata?: ReturnMetadataOption;
     }
   ) => Promise<{
     matches?: Array<{
@@ -35,7 +37,7 @@ export async function vectorizeSearch(
   const queryable = index as unknown as TextQueryCapableIndex;
   const results = await queryable.query(query, {
     topK: options.topK ?? 8,
-    returnMetadata: options.returnMetadata ?? ["title", "vendor", "signature", "guidance"]
+    returnMetadata: options.returnMetadata ?? "all"
   });
 
   return (results.matches ?? []).map((match: any) => ({

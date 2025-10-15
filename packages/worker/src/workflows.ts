@@ -81,7 +81,7 @@ export class LogWhispererPipeline {
     const query = input.chunks.slice(0, 3).join("\n");
     const retrieved = await vectorizeSearch(this.env.PATTERNS_INDEX, query, {
       topK: 8,
-      returnMetadata: ["title", "vendor", "signature", "guidance"]
+      returnMetadata: "all"
     });
     return { retrieved };
   }
@@ -94,7 +94,8 @@ export class LogWhispererPipeline {
     ];
     const response = await runWorkersAI(this.env, {
       model: "@cf/meta/llama-3.3-70b-instruct-fp8",
-      messages
+      messages,
+      response_format: { type: "json_object" }
     });
     const analysis = safeParseJSON<AnalysisResult>(forceJSON(response));
     return { analysis };
@@ -114,7 +115,8 @@ export class LogWhispererPipeline {
     ];
     const response = await runWorkersAI(this.env, {
       model: "@cf/meta/llama-3.3-8b-instruct",
-      messages
+      messages,
+      response_format: { type: "json_object" }
     });
     const parsed = safeParseJSON<{ suggested_commands: CommandSuggestion[] }>(forceJSON(response));
     const suggestions = limitSuggestions(parsed.suggested_commands, allowlist);
