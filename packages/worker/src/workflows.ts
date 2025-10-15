@@ -1,5 +1,5 @@
 import { insertEvent, insertSuggestion, type EnvBindings } from "./db";
-import { vectorizeSearch, type RetrievedPattern } from "./rag";
+import { embedText, vectorizeSearch, type RetrievedPattern } from "./rag";
 import { forceJSON, runWorkersAI } from "./llm";
 import {
   chunkByBytes,
@@ -78,12 +78,25 @@ export class LogWhispererPipeline {
   }
 
   async retrievePatterns(input: { chunks: string[] }) {
-    const query = input.chunks.slice(0, 3).join("\n");
-    const retrieved = await vectorizeSearch(this.env.PATTERNS_INDEX, query, {
-      topK: 8,
-      returnMetadata: "all"
-    });
-    return { retrieved };
+    const query = input.chunks.slice(0, 3).join("\n").trim();
+    if (!query) {
+      return { retrieved: [] };
+    }
+    try {
+      const embedding = await embedText(
+        this.env.AI,
+        query,
+        this.env.PATTERN_EMBED_MODEL
+      );
+      const retrieved = await vectorizeSearch(this.env.PATTERNS_INDEX, embedding, {
+        topK: 8,
+        returnMetadata: "all"
+      });
+      return { retrieved };
+    } catch (error) {
+      console.warn("Vector retrieval failed:", error);
+      return { retrieved: [] };
+    }
   }
 
   async analyze(input: { chunks: string[]; retrieved: RetrievedPattern[]; hints?: string; vendor?: string }) {

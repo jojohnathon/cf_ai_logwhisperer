@@ -32,13 +32,23 @@ describe("LogWhispererPipeline", () => {
   it("requests all metadata fields during pattern retrieval", async () => {
     const query = vi.fn().mockResolvedValue({ matches: [] });
     const env = {
-      PATTERNS_INDEX: { query }
+      PATTERNS_INDEX: { query },
+      AI: {
+        run: vi.fn().mockResolvedValue({
+          data: [{ embedding: [0.1, 0.2, 0.3] }]
+        })
+      },
+      PATTERN_EMBED_MODEL: "@cf/test/embedding"
     } as unknown as EnvBindings;
 
     const pipeline = new LogWhispererPipeline(env);
     await pipeline.retrievePatterns({ chunks: ["chunk"] });
 
-    expect(query).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({
+    expect(env.AI.run).toHaveBeenCalledWith(expect.objectContaining({
+      model: "@cf/test/embedding",
+      input: "chunk"
+    }));
+    expect(query).toHaveBeenCalledWith(expect.any(Float32Array), expect.objectContaining({
       returnMetadata: "all"
     }));
   });

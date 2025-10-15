@@ -22,6 +22,7 @@ export interface EnvBindings {
   LOGR2: R2Bucket;
   SAFE_COMMANDS_ALLOWLIST: string;
   MAX_TOKENS: string;
+  PATTERN_EMBED_MODEL?: string;
 }
 
 export interface AiBinding {
