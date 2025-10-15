@@ -1,6 +1,6 @@
 # cf_ai_logwhisperer
 
-## One-line pitch
+## Usage overview
 Paste router, firewall, or system logs and receive a plain-English summary, anomaly list, and up to three safe command suggestions with rationale — complete with session memory and reproducible prompts.
 
 ## Overview
@@ -132,7 +132,6 @@ curl -X POST https://<your-pages-domain>/api/chat \
 
 ## Limitations
 - Commands are suggestions only; no automatic execution occurs.
-- Voice intake is planned but not yet available in v1.
 - The analysis depends on high-quality log snippets; extremely large uploads should be chunked before submission.
 
 ## Success metrics
@@ -141,5 +140,3 @@ curl -X POST https://<your-pages-domain>/api/chat \
 - Helpfulness thumbs feedback stored in KV counters
 - Top recurring anomalies mined from events table
 
-## License
-Released under the MIT License. See [LICENSE](./LICENSE).
