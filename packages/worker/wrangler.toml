@@ -27,6 +27,7 @@ binding = "LOGR2"
 bucket_name = "logwhisperer-uploads"
 
 [[workflows]]
+name = "logwhisperer-pipeline"
 binding = "PIPELINE"
 class_name = "LogWhispererPipeline"
 
