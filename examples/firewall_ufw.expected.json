@@ -1,0 +1,11 @@
+{
+  "summary": "UFW is blocking mDNS multicast while DHCP lease negotiations are failing.",
+  "anomalies": [
+    "Repeated DHCPDECLINE events",
+    "UFW dropping UDP/5353 multicast"
+  ],
+  "suggested_commands": [
+    { "cmd": "sudo ufw allow 5353/udp", "why": "Allow mDNS multicast traffic", "risk": "low" },
+    { "cmd": "sudo systemctl restart NetworkManager", "why": "Reset DHCP client state", "risk": "med" }
+  ]
+}
