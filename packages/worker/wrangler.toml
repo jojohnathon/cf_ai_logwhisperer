@@ -33,7 +33,7 @@ class_name = "LogWhispererPipeline"
 script_name = "src/workflows.ts"
 
 [vars]
-MAX_TOKENS = "2048"
+MAX_TOKENS = "4096"
 SAFE_COMMANDS_ALLOWLIST = "iptables,ip,ufw,nft,cisco,netsh,powershell,systemctl,route"
 
 [[migrations]]

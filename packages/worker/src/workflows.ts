@@ -80,7 +80,8 @@ export class LogWhispererPipeline {
   }
 
   async chunkLogs(input: { redacted: string }) {
-    const chunks = chunkByBytes(input.redacted, 2000, 200);
+    // Increased from 2000 to 50000 bytes to support larger log inputs
+    const chunks = chunkByBytes(input.redacted, 50000, 5000);
     const hashes = chunks.map((chunk) => sha1(chunk));
     return { chunks, hashes };
   }
